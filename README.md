@@ -11,4 +11,7 @@ Resource: [搭建自己的神經網路](https://morvanzhou.github.io/tutorials/m
 - Activation
 
 ## Neural Network
+- 3 Layers NN
+- NN with Tensorboard
+
 
