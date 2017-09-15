@@ -20,6 +20,6 @@ sess.close()
 # method 2
 with tf.Session() as sess:
     result2 = sess.run(product)
-    print(result)
+    print(result2)
 
 # [[12]]
