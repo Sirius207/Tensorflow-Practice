@@ -21,6 +21,7 @@ $ tensorboard --logdir logs
 
 ## RNN
 - Classification
+- Regression
 
 
 

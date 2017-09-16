@@ -17,7 +17,7 @@ batch_size = 128
 
 n_inputs = 28               # MNIST data input (28 * 28)
 n_steps = 28                # time steps
-n_hidden_units = 128         # neurons in hidden layer
+n_hidden_units = 128        # neurons in hidden layer
 n_classes = 10              # MNIST classes (0-9 digits)
 
 # x y placeholder
@@ -44,26 +44,35 @@ biases = {
 #
 
 def RNN(X, weights, biases):
+    # Hidden layer for input to cell
+    ###############################################
+
+    # 28 step = 28 row, 28 input = 28 column each img
     # reduce 3d data to 2d data for maxmul
-    # X ==> (128 batches * 28 steps, 28 inputs)
+    # X(128, 28, 28) ==> (128 batches * 28 steps, 28 inputs)
     X = tf.reshape(X, [-1, n_inputs])
 
     # X_in = W*X + b
+    # X_in = (128 batch * 28 steps, 128 hidden)
     X_in = tf.matmul(X, weights['in']) + biases['in']
-    # X_in ==> (128 batches, 28 steps, 128 hidden)
     # recover to 3d
+    # X_in = (128 batch, 28 steps, 128 hidden)
     X_in = tf.reshape(X_in, [-1, n_steps, n_hidden_units])
 
-    # basic LSTM Cell.
+    # Basic LSTM Cell.
+    ###############################################
+
     # cell = tf.contrib.rnn.BasicLSTMCell(n_hidden_units)
-    # lstm cell is divided into two parts (c_state, h_state)
     lstm_cell = tf.contrib.rnn.BasicLSTMCell(n_hidden_units, forget_bias=1.0, state_is_tuple=True)
+    # lstm cell is divided into two parts (c_state, h_state)
     init_state = lstm_cell.zero_state(batch_size, dtype=tf.float32)
 
+    # 28 steps = time, we run in second dimension, use False
     outputs, final_state = tf.nn.dynamic_rnn(lstm_cell, X_in, initial_state=init_state, time_major=False)
 
-    # hidden layer for output as the final results
-    #############################################
+    # Hidden layer for output as the final results
+    ###############################################
+    # M1: state[1] = m_state
     outputs = tf.unstack(tf.transpose(outputs, [1, 0, 2]))
     results = tf.matmul(outputs[-1], weights['out']) + biases['out']    # shape = (128, 10)
 
